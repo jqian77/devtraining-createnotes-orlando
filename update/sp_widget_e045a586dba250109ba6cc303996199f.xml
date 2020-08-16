@@ -5,19 +5,6 @@
 
   var c = this;
 	
-	updateNote = function(updateType) {
-//			c.server.get({
-//				action: 'upateNote',
-//				noteID: c.data.noteID,
-//			  noteBody: c.data.note,
-//				noteTitle: c.data.title
-//			}).then(function(r) {
-//				c.status = r.data.status;
-//				gs.addInfoMessage("client inside updateNote status: " + c.status);
-//				});
-		  gs.addInfoMessage("client inside updateNote");
-  };
-
 	$rootScope.$on('selectNote', function(event, data) {
 		c.server.get({
 						action: 'getNote',
@@ -27,14 +14,27 @@
 						c.data.note = r.data.note.note;
 						c.data.noteID = r.data.note.sys_id;
 					});	
-			gs.addInfoMessage("client inside getNote");
+//			gs.addInfoMessage("client inside getNote");
 	});
 	
+	c.updateNote = function(updateType) {
+			c.server.get({
+				action: 'upateNote',
+				noteID: c.data.noteID,
+			  noteBody: c.data.note,
+				noteTitle: c.data.title
+			 }).then(function(r) {
+//				c.status = r.data.status;
+//				gs.addInfoMessage("client inside updateNote status: " + c.status);
+			});
+//		  gs.addInfoMessage("client inside updateNote");
+  }
+
 	
 
-		console.log('Listener caught NoteID: ' + c.data.noteID);
-		console.log('Listener caught title: ' + c.data.title);
-		console.log('Listener caught note: ' + c.data.note);
+//		console.log('Listener caught NoteID: ' + c.data.noteID);
+//		console.log('Listener caught title: ' + c.data.title);
+//		console.log('Listener caught note: ' + c.data.note);
 
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -53,27 +53,29 @@
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
-	gs.addInfoMessage("Note ID is: outside all events");
+//	gs.addInfoMessage("Note ID is: outside all events");
 	if (input && input.noteID) {
 		var note = new GlideRecord('x_snc_createnotes_note');
 		if (note.get(input.noteID)) {
 			if (input.action == 'getNote') {
 				data.note = {};
 				$sp.getRecordValues(data.note, note, "title, note, sys_id");
-				gs.addInfoMessage("Note ID is: inside getNote");
-			} else if (input.action == 'updateNote') {
+//				gs.addInfoMessage("Note ID is: inside getNote");
+			} 
+			else if (input.action == 'updateNote') {
 				note.title = input.noteTitle;
 				note.note = input.noteBody;
+				note.update();
 //				gs.addInfoMessage("Note ID is: inside updateNote");
 //				gs.addInfoMessage("Note ID is: " + input.noteID);
 //				gs.addInfoMessage("Note action is: " + input.action);
 //        gs.addInfoMessage("Note title is: " + note.title);
 //				gs.addInfoMessage("Note body is: " + note.note);
-				if (note.update()) {
-					data.status = 'success';
-				} else {
-					data.status = 'warning';
-				}
+//				if (note.update()) {
+//					data.status = 'success';
+//				} else {
+//					data.status = 'warning';
+//				}
 			}
 		}
 	} 
@@ -84,27 +86,24 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-12 02:16:50</sys_created_on>
         <sys_id>e045a586dba250109ba6cc303996199f</sys_id>
-        <sys_mod_count>44</sys_mod_count>
+        <sys_mod_count>48</sys_mod_count>
         <sys_name>Notes Body</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_e045a586dba250109ba6cc303996199f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-08-16 17:30:34</sys_updated_on>
+        <sys_updated_on>2020-08-16 18:36:23</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="c.data.noteID">
    <div class="panel-heading clearfix">
      <div class="row">       
        <div class="col-md-12">
-         <input class="form-control" id="note-title" ng-model="c.data.title" 
-                ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}" />
+         <input class="form-control" id="note-title" ng-model="c.data.title" ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}" />
        </div>
      </div>
    </div>
    <div class= "panel-body">     
-     <textarea class="form-control" id="note-body" ng-model="c.data.note" 
-                ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}">
-     </textarea>
+     <textarea class="form-control" id="note-body" ng-model="c.data.note" ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}"></textarea>
    </div>
  </div>
 <pre>{{data|json}}</pre>]]></template>
